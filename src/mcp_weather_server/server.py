@@ -1,3 +1,4 @@
+import sys
 import httpx
 import logging
 from typing import Annotated
@@ -10,7 +11,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("mcp-weather")
 
 # Create an MCP server
-mcp = FastMCP("Weather")
+port = int(sys.argv[1]) if len(sys.argv) > 1 else None
+mcp = FastMCP("Weather", port=port)
 
 async def get_coordinates(client: httpx.AsyncClient, city: str) -> tuple[float, float]:
     """
@@ -138,7 +140,8 @@ async def get_current_datetime(timezone_name: Annotated[str, Field(description="
     )
 
 def main():
-    mcp.run()
+    print("Starting MCP server...")
+    mcp.run(streamable_http=True)
 
 if __name__ == "__main__":
     main()
